@@ -1,121 +1,153 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect, useMemo } from "react"
 
-function App() {
-  const [count, setCount] = useState(0)
+// 1 
+function Hello() {
+  return <h1>React Hello</h1>
+}
 
+// 2 
+function UserCard({ name, title }) {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <div>
+      <p>{name}</p>
+      <p>{title}</p>
+    </div>
   )
 }
 
-export default App
+// 3 
+function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div>
+      <p>{count}</p>
+      <button onClick={() => setCount(prev => prev + 1)}>+</button>
+    </div>
+  )
+}
+
+// 4 
+function CounterReset() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div>
+      <p>{count}</p>
+      <button onClick={() => setCount(prev => prev + 1)}>+</button>
+      <button onClick={() => setCount(0)}>Reset</button>
+    </div>
+  )
+}
+
+// 5 
+function Toggle() {
+  const [on, setOn] = useState(false)
+
+  return (
+    <div>
+      <p>{on ? "ON" : "OFF"}</p>
+      <button onClick={() => setOn(v => !v)}>Toggle</button>
+    </div>
+  )
+}
+
+// 6 
+function ShowHide() {
+  const [show, setShow] = useState(false)
+
+  return (
+    <div>
+      <button onClick={() => setShow(v => !v)}>Hide/Show</button>
+      {show && <p>This is a text paragraph</p>}
+    </div>
+  )
+}
+
+// 7 
+function ProductList() {
+  const products = [
+    { id: 1, name: "Phone" },
+    { id: 2, name: "Laptop" },
+    { id: 3, name: "Tablet" }
+  ]
+
+  return (
+    <ul>
+      {products.map(p => <li key={p.id}>{p.name}</li>)}
+    </ul>
+  )
+}
+
+// 8 
+function FilterAvailable() {
+  const items = [
+    { id: 1, name: "Phone", available: true },
+    { id: 2, name: "Laptop", available: false },
+    { id: 3, name: "Tablet", available: true }
+  ]
+  const [list, setList] = useState(items)
+
+  function showAvailable() {
+    setList(items.filter(i => i.available))
+  }
+
+  return (
+    <div>
+      <button onClick={showAvailable}>Show Available</button>
+      <ul>
+        {list.map(i => <li key={i.id}>{i.name}</li>)}
+      </ul>
+    </div>
+  )
+}
+
+// 9 
+function SearchList() {
+  const items = ["Ali", "Sara", "Mona", "Adam", "Lina"]
+  const [query, setQuery] = useState("")
+
+  const results = items.filter(name =>
+    name.toLowerCase().includes(query.toLowerCase())
+  )
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search..."
+      />
+      <ul>
+        {results.map((name, i) => <li key={i}>{name}</li>)}
+      </ul>
+    </div>
+  )
+}
+
+// 10 
+function AddItem() {
+  const [items, setItems] = useState(["Task 1", "Task 2"])
+  const [value, setValue] = useState("")
+
+  function add() {
+    if (value.trim() === "") return
+    setItems(prev => [...prev, value.trim()])
+    setValue("")
+  }
+
+  return (
+    <div>
+      <input
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        placeholder="New item..."
+      />
+      <button onClick={add}>Add</button>
+      <ul>
+        {items.map((item, i) => <li key={i}>{item}</li>)}
+      </ul>
+    </div>
+  )
+}
+
