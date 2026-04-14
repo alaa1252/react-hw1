@@ -427,3 +427,212 @@ function CountdownTimer() {
 
   return <p>Countdown: {count}</p>
 }
+
+// 21 
+function FetchPosts() {
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/posts?_limit=10")
+      .then(r => r.json())
+      .then(d => {
+        setData(d)
+        setLoading(false)
+      })
+      .catch(() => {
+        setError("Failed to load")
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>{error}</p>
+
+  return (
+    <ul>
+      {data.map(p => <li key={p.id}>{p.title}</li>)}
+    </ul>
+  )
+}
+
+// 22 
+function Pagination() {
+  const items = Array.from({ length: 20 }, (_, i) => "Item " + (i + 1))
+  const [currentPage, setCurrentPage] = useState(1)
+  const perPage = 5
+
+  const total = Math.ceil(items.length / perPage)
+  const visible = items.slice((currentPage - 1) * perPage, currentPage * perPage)
+
+  return (
+    <div>
+      <ul>
+        {visible.map((item, i) => <li key={i}>{item}</li>)}
+      </ul>
+      <button
+        onClick={() => setCurrentPage(p => p - 1)}
+        disabled={currentPage === 1}
+      >
+        Prev
+      </button>
+      <span> Page {currentPage} of {total} </span>
+      <button
+        onClick={() => setCurrentPage(p => p + 1)}
+        disabled={currentPage === total}
+      >
+        Next
+      </button>
+    </div>
+  )
+}
+
+// 23 
+function SortList() {
+  const original = [
+    { id: 1, name: "Banana", price: 30 },
+    { id: 2, name: "Apple", price: 10 },
+    { id: 3, name: "Mango", price: 50 }
+  ]
+  const [items, setItems] = useState(original)
+  const [asc, setAsc] = useState(true)
+
+  function sortByName() {
+    const sorted = [...items].sort((a, b) =>
+      asc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+    )
+    setItems(sorted)
+    setAsc(v => !v)
+  }
+
+  function sortByPrice() {
+    const sorted = [...items].sort((a, b) =>
+      asc ? a.price - b.price : b.price - a.price
+    )
+    setItems(sorted)
+    setAsc(v => !v)
+  }
+
+  return (
+    <div>
+      <button onClick={sortByName}>Sort by Name</button>
+      <button onClick={sortByPrice}>Sort by Price</button>
+      <ul>
+        {items.map(i => <li key={i.id}>{i.name} - ${i.price}</li>)}
+      </ul>
+    </div>
+  )
+}
+
+// 24 
+function MemoSearch() {
+  const items = Array.from({ length: 1000 }, (_, i) => "Item " + (i + 1))
+  const [query, setQuery] = useState("")
+
+  const filtered = useMemo(() => {
+    return items.filter(item => item.toLowerCase().includes(query.toLowerCase()))
+  }, [items, query])
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search..."
+      />
+      <p>{filtered.length} results</p>
+      <ul>
+        {filtered.slice(0, 10).map((item, i) => <li key={i}>{item}</li>)}
+      </ul>
+    </div>
+  )
+}
+
+// 25 
+function useLocalStorage(key, initial) {
+  const [value, setValue] = useState(() => {
+    const stored = localStorage.getItem(key)
+    return stored ? JSON.parse(stored) : initial
+  })
+
+  function set(newValue) {
+    setValue(newValue)
+    localStorage.setItem(key, JSON.stringify(newValue))
+  }
+
+  return [value, set]
+}
+
+function LocalStorageDemo() {
+  const [theme, setTheme] = useLocalStorage("theme", "light")
+
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+      <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+        Toggle Theme
+      </button>
+    </div>
+  )
+}
+
+
+// app part
+const tasks = [
+  { id: 1,  label: "Hello Component",       component: <Hello /> },
+  { id: 2,  label: "UserCard Props",         component: <UserCard name="Ali" title="Developer" /> },
+  { id: 3,  label: "Counter",               component: <Counter /> },
+  { id: 4,  label: "Counter + Reset",       component: <CounterReset /> },
+  { id: 5,  label: "Toggle ON/OFF",         component: <Toggle /> },
+  { id: 6,  label: "Show / Hide",           component: <ShowHide /> },
+  { id: 7,  label: "Product List (map)",    component: <ProductList /> },
+  { id: 8,  label: "Filter Available",      component: <FilterAvailable /> },
+  { id: 9,  label: "Search List",           component: <SearchList /> },
+  { id: 10, label: "Add Item",              component: <AddItem /> },
+  { id: 11, label: "Delete Item",           component: <DeleteItem /> },
+  { id: 12, label: "Inline Edit",           component: <InlineEdit /> },
+  { id: 13, label: "Todo Checkbox",         component: <TodoList /> },
+  { id: 14, label: "Char Counter",          component: <CharCounter /> },
+  { id: 15, label: "Simple Form",           component: <SimpleForm /> },
+  { id: 16, label: "Form Validation",       component: <FormValidation /> },
+  { id: 17, label: "Select Level",          component: <SelectLevel /> },
+  { id: 18, label: "Tabs",                  component: <Tabs /> },
+  { id: 19, label: "Modal",                 component: <ModalDemo /> },
+  { id: 20, label: "Countdown Timer",       component: <CountdownTimer /> },
+  { id: 21, label: "Fetch API Posts",       component: <FetchPosts /> },
+  { id: 22, label: "Pagination",            component: <Pagination /> },
+  { id: 23, label: "Sorting",               component: <SortList /> },
+  { id: 24, label: "useMemo Search",        component: <MemoSearch /> },
+  { id: 25, label: "useLocalStorage Hook",  component: <LocalStorageDemo /> }
+]
+
+export default function App() {
+  const [active, setActive] = useState(1)
+
+  const current = tasks.find(t => t.id === active)
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>React Challenges</h1>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "20px" }}>
+        {tasks.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setActive(t.id)}
+            style={{ fontWeight: active === t.id ? "bold" : "normal" }}
+          >
+            {t.id}
+          </button>
+        ))}
+      </div>
+
+      <h2>{current.id}. {current.label}</h2>
+
+      <div style={{ marginTop: "16px" }}>
+        {current.component}
+      </div>
+    </div>
+  )
+}
